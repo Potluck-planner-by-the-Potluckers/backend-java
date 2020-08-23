@@ -50,19 +50,31 @@ public class User extends Auditable {
     @JsonIgnoreProperties(value = "user", allowSetters = true)
     private Set<UserRoles> roles = new HashSet<>();
 
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonIgnoreProperties(value = "user", allowSetters = true)
+    private Set<Attendee> attendees = new HashSet<>();
+
     /**
      * Default Constructor for JPA
      */
     public User() {
     }
 
-    /**
-     * @param username
-     * @param password
-     */
-    public User(String username, String password) {
+    public User(String username,
+                String password,
+                String fname,
+                String lname,
+                Set<UserRoles> roles,
+                Set<Attendee> attendees)
+    {
         this.username = username;
         this.password = password;
+        this.fname = fname;
+        this.lname = lname;
+        this.roles = roles;
+        this.attendees = attendees;
     }
 
     public long getUserid() {
@@ -110,5 +122,19 @@ public class User extends Auditable {
         this.lname = lname;
     }
 
+    public Set<UserRoles> getRoles() {
+        return roles;
+    }
 
+    public void setRoles(Set<UserRoles> roles) {
+        this.roles = roles;
+    }
+
+    public Set<Attendee> getAttendees() {
+        return attendees;
+    }
+
+    public void setAttendees(Set<Attendee> attendees) {
+        this.attendees = attendees;
+    }
 }

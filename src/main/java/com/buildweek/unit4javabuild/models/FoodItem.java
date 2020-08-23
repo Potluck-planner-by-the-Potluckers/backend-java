@@ -1,9 +1,11 @@
 package com.buildweek.unit4javabuild.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "foodItems")
+@Table(name = "foodItem")
 public class FoodItem extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,13 +20,23 @@ public class FoodItem extends Auditable {
     @Column
     private String attendeename;
 
+    @ManyToOne
+    @JoinColumn(name = "potluckid")
+    @JsonIgnoreProperties("fooditems")
+    private Potluck potluck;
+
     public FoodItem() {
     }
 
-    public FoodItem(String name, String type, String attendeename) {
+    public FoodItem(String name,
+                    String type,
+                    String attendeename,
+                    Potluck potluck)
+    {
         this.name = name;
         this.type = type;
         this.attendeename = attendeename;
+        this.potluck = potluck;
     }
 
     public long getFoodid() {
@@ -59,5 +71,11 @@ public class FoodItem extends Auditable {
         this.attendeename = attendeename;
     }
 
+    public Potluck getPotluck() {
+        return potluck;
+    }
 
+    public void setPotluck(Potluck potluck) {
+        this.potluck = potluck;
+    }
 }

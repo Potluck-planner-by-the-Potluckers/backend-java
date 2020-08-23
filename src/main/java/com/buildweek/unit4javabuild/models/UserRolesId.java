@@ -1,7 +1,6 @@
 package com.buildweek.unit4javabuild.models;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class UserRolesId implements Serializable {
     /**

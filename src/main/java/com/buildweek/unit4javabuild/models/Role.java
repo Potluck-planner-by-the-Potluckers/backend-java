@@ -27,6 +27,19 @@ public class Role extends Auditable {
     public Role() {
     }
 
+    public Role(String name, Set<UserRoles> users) {
+        this.name = name;
+        this.users = users;
+    }
+
+    public Set<UserRoles> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<UserRoles> users) {
+        this.users = users;
+    }
+
     public Role(String name) {
         this.name = name;
     }

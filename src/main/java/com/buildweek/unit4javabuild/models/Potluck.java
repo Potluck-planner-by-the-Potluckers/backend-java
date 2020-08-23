@@ -30,7 +30,7 @@ public class Potluck
     private LocalDate date;
 
     @Column(nullable = false)
-    private LocalTime time;
+    private String time;
 
     @OneToMany(mappedBy = "potluck",
             cascade = CascadeType.ALL,
@@ -51,7 +51,7 @@ public class Potluck
                    String description,
                    String location,
                    LocalDate date,
-                   LocalTime time,
+                   String time,
                    Set<FoodItem> fooditems,
                    Attendee attendee)
     {
@@ -114,11 +114,11 @@ public class Potluck
         this.date = time;
     }
 
-    public LocalTime getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(LocalTime time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

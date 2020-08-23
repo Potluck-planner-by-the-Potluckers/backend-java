@@ -31,8 +31,7 @@ public class Attendee extends Auditable
     {
     }
 
-    public Attendee(User user, Set<Potluck> potlucks)
-    {
+    public Attendee(User user, Set<Potluck> potlucks) {
         this.user = user;
         this.potlucks = potlucks;
     }

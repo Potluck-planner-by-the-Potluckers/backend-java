@@ -11,7 +11,7 @@ public interface FoodItemServices
 
     FoodItem findUserById(long id) throws Exception;
 
-    List<FoodItem> findByNameContaining(String username);
+    List<FoodItem> findByNameContaining(String name);
 
     FoodItem save(FoodItem foodItem);
 

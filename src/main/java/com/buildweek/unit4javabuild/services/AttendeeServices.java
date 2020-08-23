@@ -13,7 +13,7 @@ public interface AttendeeServices
 
     List<Attendee> findByNameContaining(String name);
 
-    Attendee save(Attendee attendee);
+    Attendee save(Attendee attendee) throws Exception;
 
     Attendee update(Attendee attendee, long id);
 

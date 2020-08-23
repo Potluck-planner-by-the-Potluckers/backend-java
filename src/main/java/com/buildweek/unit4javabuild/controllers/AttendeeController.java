@@ -41,7 +41,7 @@ public class AttendeeController
     }
 
     @PutMapping(value = "/user/{attendeeid}", consumes = "application/json")
-    public ResponseEntity<?> updateFullAttendee(@Valid @RequestBody Attendee updateAttendee, @PathVariable long attendeeid)
+    public ResponseEntity<?> updateFullAttendee(@Valid @RequestBody Attendee updateAttendee, @PathVariable long attendeeid) throws Exception
     {
         updateAttendee.setAttendeeid(attendeeid);
         attendeeServices.save(updateAttendee);

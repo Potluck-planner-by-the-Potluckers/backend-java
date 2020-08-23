@@ -1,7 +1,6 @@
 package com.buildweek.unit4javabuild.services;
 
 import com.buildweek.unit4javabuild.models.Attendee;
-import com.buildweek.unit4javabuild.models.User;
 import com.buildweek.unit4javabuild.repository.AttendeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,9 @@ public class AttendeeServicesImpl implements AttendeeServices
 {
     @Autowired
     private AttendeeRepository attendeerepo;
+
+    @Autowired
+    private UserServices userServices;
 
     @Override
     public List<Attendee> findAll()
@@ -35,20 +37,43 @@ public class AttendeeServicesImpl implements AttendeeServices
     }
 
     @Override
-    public List<Attendee> findByNameContaining(String name) {
+    public List<Attendee> findByNameContaining(String name)
+    {
+//        return attendeerepo.findByNameContainingIgnoreCase(name.toLowerCase());
         return null;
     }
 
     @Override
-    public Attendee save(Attendee attendee) {
-        return null;
+    public Attendee save(Attendee attendee) throws Exception {
+        Attendee newAttendee = new Attendee();
+
+        if (attendee.getAttendeeid() != 0)
+        {
+            attendeerepo.findById(attendee.getAttendeeid())
+                    .orElseThrow(() -> new EntityNotFoundException("Attendee id " + attendee.getAttendeeid() + " not Found!"));
+            newAttendee.setAttendeeid(attendee.getAttendeeid());
+        }
+
+        newAttendee.setGoing(attendee.isGoing());
+        if (attendee.getUser() != null)
+        {
+            newAttendee.setUser(userServices.findUserById(attendee.getUser().getUserid()));
+        }
+
+        newAttendee.setPotlucks(attendee.getPotlucks());
+
+        return attendeerepo.save(newAttendee);
     }
 
     @Override
-    public Attendee update(Attendee attendee, long id) {
+    public Attendee update(Attendee attendee, long id)
+    {
+        Attendee updateUser = findAttendeeById(id);
+
         return null;
     }
 
+    @Transactional
     @Override
     public void delete(long id)
     {

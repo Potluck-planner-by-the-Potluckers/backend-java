@@ -4,6 +4,7 @@ import com.buildweek.unit4javabuild.models.FoodItem;
 import com.buildweek.unit4javabuild.repository.FoodItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -31,8 +32,9 @@ public class FoodItemServicesImpl implements FoodItemServices
     }
 
     @Override
-    public List<FoodItem> findByNameContaining(String username) {
-        return null;
+    public List<FoodItem> findByNameContaining(String name)
+    {
+        return fooditemrepo.findByNameContainingIgnoreCase(name.toLowerCase());
     }
 
     @Override
@@ -45,6 +47,7 @@ public class FoodItemServicesImpl implements FoodItemServices
         return null;
     }
 
+    @Transactional
     @Override
     public void delete(long id)
     {

@@ -32,8 +32,9 @@ public class PotluckServicesImpl implements PotluckServices
     }
 
     @Override
-    public List<Potluck> findByNameContaining(String username) {
-        return null;
+    public List<Potluck> findByNameContaining(String name)
+    {
+        return potluckrepo.findByNameContainingIgnoreCase(name.toLowerCase());
     }
 
     @Override
@@ -46,6 +47,7 @@ public class PotluckServicesImpl implements PotluckServices
         return null;
     }
 
+    @Transactional
     @Override
     public void delete(long id)
     {

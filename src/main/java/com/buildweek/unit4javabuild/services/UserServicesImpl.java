@@ -33,10 +33,10 @@ public class UserServicesImpl implements UserServices
     }
 
     @Override
-    public User findUserById(long userid) throws EntityNotFoundException
+    public User findUserById(long id) throws EntityNotFoundException
     {
-        return userrepo.findById(userid)
-                .orElseThrow(() -> new EntityNotFoundException("User id " + userid + " not Found!"));
+        return userrepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User id " + id + " not Found!"));
     }
 
     @Override

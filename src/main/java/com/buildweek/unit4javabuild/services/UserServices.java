@@ -8,7 +8,7 @@ public interface UserServices
 {
     List<User> findAll();
 
-    User findUserById(long userid) throws Exception;
+    User findUserById(long id) throws Exception;
 
     List<User> findByNameContaining(String username);
 

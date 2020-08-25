@@ -46,23 +46,23 @@ public class PotluckController
 
     @PostMapping(value = "/potluck",
             consumes = "application/json")
-    public ResponseEntity<?> addNewPotluck(@Valid @RequestBody Potluck potluck) throws URISyntaxException
+    public ResponseEntity<?> addNewPotluck(@Valid @RequestBody Potluck newPotluck) throws Exception
     {
-        potluck.setPotluckid(0);
-        potluck = potluckServices.save(potluck);
+        newPotluck.setPotluckid(0);
+        newPotluck = potluckServices.save(newPotluck);
 
         HttpHeaders responseHeaders = new HttpHeaders();
-        URI newUserURI = ServletUriComponentsBuilder.fromCurrentRequest()
+        URI newPotluckURI = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{userid}")
-                .buildAndExpand(potluck.getPotluckid())
+                .buildAndExpand(newPotluck.getPotluckid())
                 .toUri();
-        responseHeaders.setLocation(newUserURI);
+        responseHeaders.setLocation(newPotluckURI);
 
         return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/potluck/{potluckid}", consumes = "application/json")
-    public ResponseEntity<?> updateFullPotluck(@Valid @RequestBody Potluck updatePotluck, @PathVariable long potluckid)
+    public ResponseEntity<?> updateFullPotluck(@Valid @RequestBody Potluck updatePotluck, @PathVariable long potluckid) throws Exception
     {
         updatePotluck.setPotluckid(potluckid);
         potluckServices.save(updatePotluck);

@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface FoodItemRepository extends CrudRepository<FoodItem, Long>
 {
+
+
     List<FoodItem> findByNameContainingIgnoreCase(String name);
 }

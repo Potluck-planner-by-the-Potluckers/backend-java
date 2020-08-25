@@ -2,6 +2,8 @@ package com.buildweek.unit4javabuild.services;
 
 import com.buildweek.unit4javabuild.models.Attendee;
 import com.buildweek.unit4javabuild.repository.AttendeeRepository;
+import com.buildweek.unit4javabuild.repository.PotluckRepository;
+import com.buildweek.unit4javabuild.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +20,10 @@ public class AttendeeServicesImpl implements AttendeeServices
     private AttendeeRepository attendeerepo;
 
     @Autowired
-    private UserServices userServices;
+    private UserRepository userrepo;
+
+    @Autowired
+    private PotluckRepository potluckrepo;
 
     @Override
     public List<Attendee> findAll()
@@ -39,8 +44,7 @@ public class AttendeeServicesImpl implements AttendeeServices
     @Override
     public List<Attendee> findByNameContaining(String name)
     {
-//        return attendeerepo.findByNameContainingIgnoreCase(name.toLowerCase());
-        return null;
+        return attendeerepo.findByNameContainingIgnoreCase(name.toLowerCase());
     }
 
     @Override
@@ -55,12 +59,15 @@ public class AttendeeServicesImpl implements AttendeeServices
         }
 
         newAttendee.setGoing(attendee.isGoing());
+
         if (attendee.getUser() != null)
         {
-            newAttendee.setUser(userServices.findUserById(attendee.getUser().getUserid()));
+            newAttendee.setUser(userrepo.findById(attendee.getUser().getUserid())
+                    .orElseThrow(() -> new EntityNotFoundException("User id " + attendee.getUser().getUserid() + " not Found!")));
         }
 
-        newAttendee.setPotlucks(attendee.getPotlucks());
+        newAttendee.setPotluck(potluckrepo.findById(attendee.getPotluck().getPotluckid())
+                    .orElseThrow(() -> new EntityNotFoundException("Potluck id " + attendee.getPotluck().getPotluckid() + " not Found!")));
 
         return attendeerepo.save(newAttendee);
     }
@@ -73,6 +80,16 @@ public class AttendeeServicesImpl implements AttendeeServices
         return null;
     }
 
+    @Override
+    public void markGoing(long id) {
+        Attendee isGoing = attendeerepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Attendee id " + id + " not Found"));
+
+        isGoing.setGoing(!isGoing.isGoing());
+
+        attendeerepo.save(isGoing);
+    }
+
     @Transactional
     @Override
     public void delete(long id)
@@ -80,5 +97,11 @@ public class AttendeeServicesImpl implements AttendeeServices
         attendeerepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Attendee id " + id + " not found!"));
         attendeerepo.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAll() {
+        attendeerepo.deleteAll();
     }
 }

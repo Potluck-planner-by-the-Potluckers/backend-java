@@ -1,8 +1,8 @@
 package com.buildweek.unit4javabuild.services;
 
-import com.buildweek.unit4javabuild.models.Role;
-import com.buildweek.unit4javabuild.models.User;
-import com.buildweek.unit4javabuild.models.UserRoles;
+import com.buildweek.unit4javabuild.models.*;
+import com.buildweek.unit4javabuild.repository.AttendeeRepository;
+import com.buildweek.unit4javabuild.repository.PotluckRepository;
 import com.buildweek.unit4javabuild.repository.RoleRepository;
 import com.buildweek.unit4javabuild.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,13 @@ public class UserServicesImpl implements UserServices
     private UserRepository userrepo;
 
     @Autowired
-    private RoleServices roleServices;
+    private RoleRepository rolerepo;
+
+    @Autowired
+    private PotluckRepository potluckrepo;
+
+    @Autowired
+    private AttendeeRepository attendrepo;
 
     @Override
     public List<User> findAll()
@@ -45,6 +51,7 @@ public class UserServicesImpl implements UserServices
         return userrepo.findByUsernameContainingIgnoreCase(username.toLowerCase());
     }
 
+    @Transactional
     @Override
     public User save(User user)
     {
@@ -59,21 +66,51 @@ public class UserServicesImpl implements UserServices
 
         newUser.setUsername(user.getUsername().toLowerCase());
         newUser.setPasswordNoEncrypt(user.getPassword());
-        newUser.setFname(user.getFname().toLowerCase());
-        newUser.setFname(user.getLname().toLowerCase());
+
+        if (user.getFname() != null)
+        {
+            newUser.setFname(user.getFname().toLowerCase());
+        }
+        if (user.getLname() != null)
+        {
+            newUser.setLname(user.getLname().toLowerCase());
+        }
 
         newUser.getRoles()
                 .clear();
         for (UserRoles ur : user.getRoles())
         {
-            Role addRole = roleServices.findRoleById(ur.getRole()
-                    .getRoleid());
+            Role addRole = rolerepo.findById(ur.getRole().getRoleid())
+                    .orElseThrow(() -> new EntityNotFoundException("Role id " + ur.getRole().getRoleid()));
             newUser.getRoles()
                     .add(new UserRoles(newUser, addRole));
         }
+
+        newUser.getPotlucks().clear();
+        for (Potluck pl : user.getPotlucks())
+        {
+            newUser.getPotlucks().add(new Potluck(
+                    pl.getName(),
+                    pl.getDescription(),
+                    pl.getLocation(),
+                    pl.getDate(),
+                    pl.getTime(),
+                    newUser));
+        }
+
+        newUser.getAttendees().clear();
+        for (Attendee attendee : user.getAttendees())
+        {
+            newUser.getAttendees().add(new Attendee(
+                    attendee.getName(),
+                    newUser,
+                    attendee.getPotluck()));
+        }
+
         return userrepo.save(newUser);
     }
 
+    @Transactional
     @Override
     public User update(User user, long userid)
     {
@@ -108,11 +145,44 @@ public class UserServicesImpl implements UserServices
                     .clear();
             for (UserRoles ur : user.getRoles())
             {
-                Role addRole = roleServices.findRoleById(ur.getRole()
-                        .getRoleid());
+                Role addRole = rolerepo.findById(ur.getRole().getRoleid())
+                        .orElseThrow(() -> new EntityNotFoundException("Role id " + ur.getRole().getRoleid()));
 
                 currentUser.getRoles()
                         .add(new UserRoles(currentUser, addRole));
+            }
+        }
+
+        if (user.getPotlucks().size() > 0)
+        {
+            currentUser.getPotlucks().clear();
+            for (Potluck pl : user.getPotlucks())
+            {
+                Potluck addPotluck = potluckrepo.findById(pl.getPotluckid())
+                        .orElseThrow(() -> new EntityNotFoundException("Potluck id " + pl.getPotluckid() + " not Found!"));
+                currentUser.getPotlucks().add(new Potluck(
+                        pl.getName(),
+                        pl.getDescription(),
+                        pl.getLocation(),
+                        pl.getDate(),
+                        pl.getTime(),
+                        currentUser
+                ));
+            }
+        }
+
+        if (user.getAttendees().size() > 0)
+        {
+            currentUser.getAttendees().clear();
+            for (Attendee attendee : user.getAttendees())
+            {
+                Attendee addAttendee = attendrepo.findById(attendee.getAttendeeid())
+                        .orElseThrow(() -> new EntityNotFoundException("Attendee id " + attendee.getAttendeeid() + " not Found!"));
+                currentUser.getAttendees().add(new Attendee(
+                         attendee.getName(),
+                         currentUser,
+                         attendee.getPotluck()
+                ));
             }
         }
 
@@ -126,5 +196,11 @@ public class UserServicesImpl implements UserServices
         userrepo.findById(userid)
                 .orElseThrow(() -> new EntityNotFoundException("User id " + userid + " not found!"));
         userrepo.deleteById(userid);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAll() {
+        userrepo.deleteAll();
     }
 }

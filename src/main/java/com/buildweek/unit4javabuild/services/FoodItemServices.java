@@ -9,13 +9,15 @@ public interface FoodItemServices
 {
     List<FoodItem> findAll();
 
-    FoodItem findUserById(long id) throws Exception;
+    FoodItem findFoodById(long id) throws Exception;
 
     List<FoodItem> findByNameContaining(String name);
 
-    FoodItem save(FoodItem foodItem);
+    FoodItem save(FoodItem foodItem) throws Exception;
 
     FoodItem update(FoodItem foodItem, long id);
 
     void delete(long id);
+
+    void deleteAll();
 }

@@ -1,7 +1,6 @@
 package com.buildweek.unit4javabuild.services;
 
 import com.buildweek.unit4javabuild.models.Attendee;
-import com.buildweek.unit4javabuild.models.FoodItem;
 
 import java.util.List;
 
@@ -17,5 +16,9 @@ public interface AttendeeServices
 
     Attendee update(Attendee attendee, long id);
 
+    void markGoing(long id);
+
     void delete(long id);
+
+    void deleteAll();
 }

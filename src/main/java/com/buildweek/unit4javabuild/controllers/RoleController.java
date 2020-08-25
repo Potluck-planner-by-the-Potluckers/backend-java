@@ -3,7 +3,6 @@ package com.buildweek.unit4javabuild.controllers;
 import com.buildweek.unit4javabuild.models.Role;
 import com.buildweek.unit4javabuild.services.RoleServices;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,15 +28,13 @@ public class RoleController
     }
 
     @GetMapping(value = "/role/{rolename}", produces = "application/json")
-    public ResponseEntity<?> getRoleByName(@PathVariable String rolename)
-    {
+    public ResponseEntity<?> getRoleByName(@PathVariable String rolename) {
         Role role = roleServices.findByName(rolename);
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
     @PostMapping(value = "/role", consumes = "application/json")
-    public ResponseEntity<?> addNewRole(@Valid @RequestBody Role newRole)
-    {
+    public ResponseEntity<?> addNewRole(@Valid @RequestBody Role newRole) {
         newRole.setRoleid(0);
         newRole = roleServices.save(newRole);
 

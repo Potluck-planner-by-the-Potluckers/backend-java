@@ -1,14 +1,16 @@
 package com.buildweek.unit4javabuild.controllers;
 
 import com.buildweek.unit4javabuild.models.FoodItem;
-import com.buildweek.unit4javabuild.models.User;
 import com.buildweek.unit4javabuild.services.FoodItemServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -28,7 +30,7 @@ public class FoodItemController
     @GetMapping(value = "/fooditem/{foodid}", produces = "application/json")
     public ResponseEntity<?> getFoodById(@PathVariable Long foodid) throws Exception
     {
-        FoodItem foodItem = foodItemServices.findUserById(foodid);
+        FoodItem foodItem = foodItemServices.findFoodById(foodid);
         return new ResponseEntity<>(foodItem, HttpStatus.OK);
     }
 
@@ -40,9 +42,23 @@ public class FoodItemController
         return new ResponseEntity<>(foodItems, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/fooditem", consumes = "application/json")
+    public ResponseEntity<?> addNewRole(@Valid @RequestBody FoodItem newFood) throws Exception {
+        newFood.setFoodid(0);
+        newFood = foodItemServices.save(newFood);
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        URI newFoodItemURI = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/roleid")
+                .buildAndExpand(newFood.getFoodid())
+                .toUri();
+        responseHeaders.setLocation(newFoodItemURI);
+
+        return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
+    }
+
     @PutMapping(value = "/fooditem/{foodid}", consumes = "application/json")
-    public ResponseEntity<?> updateFullFood(@Valid @RequestBody FoodItem updateFoodItem, @PathVariable long foodid)
-    {
+    public ResponseEntity<?> updateFullFood(@Valid @RequestBody FoodItem updateFoodItem, @PathVariable long foodid) throws Exception {
         updateFoodItem.setFoodid(foodid);
         foodItemServices.save(updateFoodItem);
 

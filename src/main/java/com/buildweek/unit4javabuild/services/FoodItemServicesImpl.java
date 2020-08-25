@@ -2,6 +2,7 @@ package com.buildweek.unit4javabuild.services;
 
 import com.buildweek.unit4javabuild.models.FoodItem;
 import com.buildweek.unit4javabuild.repository.FoodItemRepository;
+import com.buildweek.unit4javabuild.repository.PotluckRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,9 @@ public class FoodItemServicesImpl implements FoodItemServices
     @Autowired
     private FoodItemRepository fooditemrepo;
 
+    @Autowired
+    private PotluckRepository potluckrepo;
+
     @Override
     public List<FoodItem> findAll()
     {
@@ -26,7 +30,7 @@ public class FoodItemServicesImpl implements FoodItemServices
     }
 
     @Override
-    public FoodItem findUserById(long id) throws Exception {
+    public FoodItem findFoodById(long id) throws EntityNotFoundException {
         return fooditemrepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Food Item id " + id + " not Found!"));
     }
@@ -38,13 +42,56 @@ public class FoodItemServicesImpl implements FoodItemServices
     }
 
     @Override
-    public FoodItem save(FoodItem foodItem) {
-        return null;
+    public FoodItem save(FoodItem foodItem) throws EntityNotFoundException {
+        FoodItem newFood = new FoodItem();
+
+        if (foodItem.getFoodid() != 0)
+        {
+            fooditemrepo.findById(foodItem.getFoodid())
+                    .orElseThrow(() -> new EntityNotFoundException("Food item " + foodItem.getFoodid() + " not Found!"));
+            newFood.setFoodid(foodItem.getFoodid());
+        }
+
+        newFood.setName(foodItem.getName());
+        newFood.setType(foodItem.getType());
+        newFood.setAttendeename(foodItem.getAttendeename());
+
+        if (foodItem.getPotluck() != null)
+        {
+            newFood.setPotluck(potluckrepo.findById(foodItem.getPotluck().getPotluckid())
+                    .orElseThrow(() -> new EntityNotFoundException("Potluck " + foodItem.getPotluck().getPotluckid() + " not Found!")));
+        }
+
+        return fooditemrepo.save(newFood);
     }
 
     @Override
-    public FoodItem update(FoodItem foodItem, long id) {
-        return null;
+    public FoodItem update(FoodItem foodItem, long id)
+    {
+
+        FoodItem currentFood = findFoodById(id);
+
+        if (foodItem.getName() != null)
+        {
+            currentFood.setName(foodItem.getName().toLowerCase());
+        }
+
+        if (foodItem.getType() != null)
+        {
+            currentFood.setType(foodItem.getType());
+        }
+
+        if (foodItem.getAttendeename() != null)
+        {
+            currentFood.setAttendeename(foodItem.getAttendeename());
+        }
+
+        if (foodItem.getPotluck() != null)
+        {
+            currentFood.setPotluck(foodItem.getPotluck());
+        }
+
+        return fooditemrepo.save(currentFood);
     }
 
     @Transactional
@@ -54,5 +101,11 @@ public class FoodItemServicesImpl implements FoodItemServices
         fooditemrepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Food Item id " + id + " not found!"));
         fooditemrepo.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAll() {
+        fooditemrepo.deleteAll();
     }
 }

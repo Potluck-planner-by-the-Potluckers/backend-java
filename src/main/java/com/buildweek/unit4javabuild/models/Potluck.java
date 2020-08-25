@@ -3,8 +3,6 @@ package com.buildweek.unit4javabuild.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,10 +25,15 @@ public class Potluck
     private String location;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private String date;
 
     @Column(nullable = false)
     private String time;
+
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    @JsonIgnoreProperties("potlucks")
+    private User user;
 
     @OneToMany(mappedBy = "potluck",
             cascade = CascadeType.ALL,
@@ -38,30 +41,31 @@ public class Potluck
     @JsonIgnoreProperties("potluck")
     private Set<FoodItem> fooditems = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "attendeeid")
+    @OneToMany(mappedBy = "potluck",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     @JsonIgnoreProperties("potluck")
-    private Attendee attendee;
-
-    public Potluck()
-    {
-    }
+    private Set<Attendee> attendees = new HashSet<>();
 
     public Potluck(String name,
                    String description,
                    String location,
-                   LocalDate date,
+                   String date,
                    String time,
-                   Set<FoodItem> fooditems,
-                   Attendee attendee)
+                   User user)
     {
         this.name = name;
         this.description = description;
         this.location = location;
         this.date = date;
         this.time = time;
-        this.fooditems = fooditems;
-        this.attendee = attendee;
+        this.user = user;
+    }
+
+
+
+    public Potluck()
+    {
     }
 
     public long getPotluckid()
@@ -104,14 +108,12 @@ public class Potluck
         this.location = location;
     }
 
-    public LocalDate getDate()
-    {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate time)
-    {
-        this.date = time;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getTime() {
@@ -132,11 +134,19 @@ public class Potluck
         this.fooditems = foodItems;
     }
 
-    public Attendee getAttendee() {
-        return attendee;
+    public Set<Attendee> getAttendees() {
+        return attendees;
     }
 
-    public void setAttendee(Attendee attendee) {
-        this.attendee = attendee;
+    public void setAttendees(Set<Attendee> attendees) {
+        this.attendees = attendees;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

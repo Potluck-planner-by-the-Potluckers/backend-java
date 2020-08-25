@@ -1,16 +1,21 @@
 package com.buildweek.unit4javabuild.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User extends Auditable {
+public class User extends Auditable
+{
     /**
      * long Primary Key of the users table.
      */
@@ -54,6 +59,12 @@ public class User extends Auditable {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     @JsonIgnoreProperties(value = "user", allowSetters = true)
+    private Set<Potluck> potlucks = new HashSet<>();
+
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonIgnoreProperties(value = "users", allowSetters = true)
     private Set<Attendee> attendees = new HashSet<>();
 
     /**
@@ -63,18 +74,21 @@ public class User extends Auditable {
     }
 
     public User(String username,
+                String password)
+    {
+        this.username = username;
+        this.password = password;
+    }
+
+    public User(String username,
                 String password,
                 String fname,
-                String lname,
-                Set<UserRoles> roles,
-                Set<Attendee> attendees)
+                String lname)
     {
         this.username = username;
         this.password = password;
         this.fname = fname;
         this.lname = lname;
-        this.roles = roles;
-        this.attendees = attendees;
     }
 
     public long getUserid() {
@@ -136,5 +150,29 @@ public class User extends Auditable {
 
     public void setAttendees(Set<Attendee> attendees) {
         this.attendees = attendees;
+    }
+
+    public Set<Potluck> getPotlucks() {
+        return potlucks;
+    }
+
+    public void setPotlucks(Set<Potluck> potlucks) {
+        this.potlucks = potlucks;
+    }
+
+    @JsonIgnore
+    public List<SimpleGrantedAuthority> getAuthority()
+    {
+        List<SimpleGrantedAuthority> rtnList = new ArrayList<>();
+
+        for (UserRoles r : this.roles)
+        {
+            String myRole = "ROLE_" + r.getRole()
+                    .getName()
+                    .toUpperCase();
+            rtnList.add(new SimpleGrantedAuthority(myRole));
+        }
+
+        return rtnList;
     }
 }

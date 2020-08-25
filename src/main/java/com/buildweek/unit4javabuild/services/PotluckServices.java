@@ -13,9 +13,11 @@ public interface PotluckServices
 
     List<Potluck> findByNameContaining(String username);
 
-    Potluck save(Potluck potluck);
+    Potluck save(Potluck potluck) throws Exception;
 
-    Potluck update(Potluck potluck, long id);
+    Potluck update(Potluck potluck, long id) throws Exception;
 
     void delete(long id);
+
+    void deleteAll();
 }

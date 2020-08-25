@@ -13,4 +13,8 @@ public interface RoleServices
     Role findRoleById(long id);
 
     Role save(Role role);
+
+    void delete(long id);
+
+    void deleteAll();
 }

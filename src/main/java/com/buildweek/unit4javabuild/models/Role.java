@@ -9,7 +9,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-public class Role extends Auditable {
+public class Role extends Auditable
+{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long roleid;
@@ -25,6 +26,19 @@ public class Role extends Auditable {
     private Set<UserRoles> users = new HashSet<>();
 
     public Role() {
+    }
+
+    public Role(String name, Set<UserRoles> users) {
+        this.name = name;
+        this.users = users;
+    }
+
+    public Set<UserRoles> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<UserRoles> users) {
+        this.users = users;
     }
 
     public Role(String name) {

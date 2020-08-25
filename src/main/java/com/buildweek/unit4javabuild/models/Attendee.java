@@ -8,11 +8,14 @@ import java.util.Set;
 
 @Entity
 @Table(name = "attendee")
-public class Attendee extends Auditable
+public class Attendee
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long attendeeid;
+
+    @Column
+    private String name;
 
     private boolean isGoing = false;
 
@@ -21,20 +24,19 @@ public class Attendee extends Auditable
     @JsonIgnoreProperties("attendees")
     private User user;
 
-    @OneToMany(mappedBy = "attendee",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    @JsonIgnoreProperties("attendee")
-    private Set<Potluck> potlucks = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "potluckid")
+    @JsonIgnoreProperties("attendees")
+    private Potluck potluck;
 
     public Attendee()
     {
     }
 
-    public Attendee(User user, Set<Potluck> potlucks)
-    {
+    public Attendee(String name, User user, Potluck potluck) {
+        this.name = name;
         this.user = user;
-        this.potlucks = potlucks;
+        this.potluck = potluck;
     }
 
     public long getAttendeeid()
@@ -44,6 +46,14 @@ public class Attendee extends Auditable
 
     public void setAttendeeid(long attendeeid) {
         this.attendeeid = attendeeid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isGoing() {
@@ -62,11 +72,11 @@ public class Attendee extends Auditable
         this.user = user;
     }
 
-    public Set<Potluck> getPotlucks() {
-        return potlucks;
+    public Potluck getPotluck() {
+        return potluck;
     }
 
-    public void setPotlucks(Set<Potluck> potlucks) {
-        this.potlucks = potlucks;
+    public void setPotluck(Potluck potluck) {
+        this.potluck = potluck;
     }
 }

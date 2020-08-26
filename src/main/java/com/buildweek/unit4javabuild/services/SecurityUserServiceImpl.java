@@ -1,5 +1,6 @@
 package com.buildweek.unit4javabuild.services;
 
+import com.buildweek.unit4javabuild.exceptions.ResourceNotFoundException;
 import com.buildweek.unit4javabuild.models.User;
 import com.buildweek.unit4javabuild.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 
 // make sure the user that is in the import be the one from this application, not core security
 // import org.springframework.security.core.userdetails.User;
@@ -37,12 +37,12 @@ public class SecurityUserServiceImpl
     @Override
     public UserDetails loadUserByUsername(String s)
             throws
-            EntityNotFoundException
+            ResourceNotFoundException
     {
         User user = userrepo.findByUsername(s.toLowerCase());
         if (user == null)
         {
-            throw new EntityNotFoundException("Invalid username or password.");
+            throw new ResourceNotFoundException("Invalid username or password.");
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                                                                       user.getPassword(),

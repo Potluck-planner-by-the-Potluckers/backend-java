@@ -1,5 +1,6 @@
 package com.buildweek.unit4javabuild.services;
 
+import com.buildweek.unit4javabuild.exceptions.ResourceNotFoundException;
 import com.buildweek.unit4javabuild.models.FoodItem;
 import com.buildweek.unit4javabuild.repository.FoodItemRepository;
 import com.buildweek.unit4javabuild.repository.PotluckRepository;
@@ -7,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +30,9 @@ public class FoodItemServicesImpl implements FoodItemServices
     }
 
     @Override
-    public FoodItem findFoodById(long id) throws EntityNotFoundException {
+    public FoodItem findFoodById(long id) throws ResourceNotFoundException {
         return fooditemrepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Food Item id " + id + " not Found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Food Item id " + id + " not Found!"));
     }
 
     @Override
@@ -42,13 +42,13 @@ public class FoodItemServicesImpl implements FoodItemServices
     }
 
     @Override
-    public FoodItem save(FoodItem foodItem) throws EntityNotFoundException {
+    public FoodItem save(FoodItem foodItem) throws ResourceNotFoundException {
         FoodItem newFood = new FoodItem();
 
         if (foodItem.getFoodid() != 0)
         {
             fooditemrepo.findById(foodItem.getFoodid())
-                    .orElseThrow(() -> new EntityNotFoundException("Food item " + foodItem.getFoodid() + " not Found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Food item " + foodItem.getFoodid() + " not Found!"));
             newFood.setFoodid(foodItem.getFoodid());
         }
 
@@ -59,7 +59,7 @@ public class FoodItemServicesImpl implements FoodItemServices
         if (foodItem.getPotluck() != null)
         {
             newFood.setPotluck(potluckrepo.findById(foodItem.getPotluck().getPotluckid())
-                    .orElseThrow(() -> new EntityNotFoundException("Potluck " + foodItem.getPotluck().getPotluckid() + " not Found!")));
+                    .orElseThrow(() -> new ResourceNotFoundException("Potluck " + foodItem.getPotluck().getPotluckid() + " not Found!")));
         }
 
         return fooditemrepo.save(newFood);
@@ -99,7 +99,7 @@ public class FoodItemServicesImpl implements FoodItemServices
     public void delete(long id)
     {
         fooditemrepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Food Item id " + id + " not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Food Item id " + id + " not found!"));
         fooditemrepo.deleteById(id);
     }
 

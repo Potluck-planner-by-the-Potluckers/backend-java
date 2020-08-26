@@ -1,5 +1,6 @@
 package com.buildweek.unit4javabuild.services;
 
+import com.buildweek.unit4javabuild.exceptions.ResourceNotFoundException;
 import com.buildweek.unit4javabuild.models.Attendee;
 import com.buildweek.unit4javabuild.models.FoodItem;
 import com.buildweek.unit4javabuild.models.Potluck;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class PotluckServicesImpl implements PotluckServices
     @Override
     public Potluck findPotluckById(long id) throws Exception {
         return potluckrepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Potluck id " + id + " not Found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Potluck id " + id + " not Found!"));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class PotluckServicesImpl implements PotluckServices
         if (potluck.getPotluckid() != 0)
         {
             potluckrepo.findById(potluck.getPotluckid())
-                    .orElseThrow(() -> new EntityNotFoundException("Potluck id " + potluck.getPotluckid() + " not Found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Potluck id " + potluck.getPotluckid() + " not Found!"));
             newPotluck.setPotluckid(potluck.getPotluckid());
         }
 
@@ -73,7 +73,8 @@ public class PotluckServicesImpl implements PotluckServices
         if (potluck.getUser() != null)
         {
             newPotluck.setUser(userrepo.findById(potluck.getUser().getUserid())
-                    .orElseThrow(() -> new EntityNotFoundException("User id " + potluck.getUser().getUserid() + " not Found")));
+                    .orElseThrow(() -> new ResourceNotFoundException("User id " + potluck.getUser().getUserid() + " not Found")));
+            newPotluck.setUser(potluck.getUser());
         }
 
         newPotluck.getFooditems().clear();
@@ -140,7 +141,7 @@ public class PotluckServicesImpl implements PotluckServices
             for (Attendee attendee : potluck.getAttendees())
             {
                 Attendee addAttendee = attendrepo.findById(attendee.getAttendeeid())
-                        .orElseThrow(() -> new EntityNotFoundException("Attendee id " + attendee.getAttendeeid() + " not Found"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Attendee id " + attendee.getAttendeeid() + " not Found"));
                 currentPotluck.getAttendees().add(new Attendee(
                         attendee.getName(),
                         attendee.getUser(),
@@ -155,7 +156,7 @@ public class PotluckServicesImpl implements PotluckServices
             for (FoodItem food : potluck.getFooditems())
             {
                 FoodItem addFood = foodrepo.findById(food.getFoodid())
-                        .orElseThrow(() -> new EntityNotFoundException("Food id " + food.getFoodid() + " not Found!"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Food id " + food.getFoodid() + " not Found!"));
                 currentPotluck.getFooditems().add(new FoodItem(
                         food.getName(),
                         food.getType(),
@@ -173,7 +174,7 @@ public class PotluckServicesImpl implements PotluckServices
     public void delete(long id)
     {
         potluckrepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Potluck id " + id + " not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Potluck id " + id + " not found!"));
         potluckrepo.deleteById(id);
     }
 

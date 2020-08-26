@@ -1,5 +1,6 @@
 package com.buildweek.unit4javabuild.services;
 
+import com.buildweek.unit4javabuild.exceptions.ResourceNotFoundException;
 import com.buildweek.unit4javabuild.models.*;
 import com.buildweek.unit4javabuild.repository.AttendeeRepository;
 import com.buildweek.unit4javabuild.repository.PotluckRepository;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +39,10 @@ public class UserServicesImpl implements UserServices
     }
 
     @Override
-    public User findUserById(long id) throws EntityNotFoundException
+    public User findUserById(long id) throws ResourceNotFoundException
     {
         return userrepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User id " + id + " not Found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("User id " + id + " not Found!"));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class UserServicesImpl implements UserServices
         if (user.getUserid() != 0)
         {
             userrepo.findById(user.getUserid())
-                    .orElseThrow(() -> new EntityNotFoundException("User id " + user.getUserid() + " not found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("User id " + user.getUserid() + " not found!"));
             newUser.setUserid(user.getUserid());
         }
 
@@ -81,7 +81,7 @@ public class UserServicesImpl implements UserServices
         for (UserRoles ur : user.getRoles())
         {
             Role addRole = rolerepo.findById(ur.getRole().getRoleid())
-                    .orElseThrow(() -> new EntityNotFoundException("Role id " + ur.getRole().getRoleid()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Role id " + ur.getRole().getRoleid()));
             newUser.getRoles()
                     .add(new UserRoles(newUser, addRole));
         }
@@ -146,7 +146,7 @@ public class UserServicesImpl implements UserServices
             for (UserRoles ur : user.getRoles())
             {
                 Role addRole = rolerepo.findById(ur.getRole().getRoleid())
-                        .orElseThrow(() -> new EntityNotFoundException("Role id " + ur.getRole().getRoleid()));
+                        .orElseThrow(() -> new ResourceNotFoundException("Role id " + ur.getRole().getRoleid()));
 
                 currentUser.getRoles()
                         .add(new UserRoles(currentUser, addRole));
@@ -159,7 +159,7 @@ public class UserServicesImpl implements UserServices
             for (Potluck pl : user.getPotlucks())
             {
                 Potluck addPotluck = potluckrepo.findById(pl.getPotluckid())
-                        .orElseThrow(() -> new EntityNotFoundException("Potluck id " + pl.getPotluckid() + " not Found!"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Potluck id " + pl.getPotluckid() + " not Found!"));
                 currentUser.getPotlucks().add(new Potluck(
                         pl.getName(),
                         pl.getDescription(),
@@ -177,7 +177,7 @@ public class UserServicesImpl implements UserServices
             for (Attendee attendee : user.getAttendees())
             {
                 Attendee addAttendee = attendrepo.findById(attendee.getAttendeeid())
-                        .orElseThrow(() -> new EntityNotFoundException("Attendee id " + attendee.getAttendeeid() + " not Found!"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Attendee id " + attendee.getAttendeeid() + " not Found!"));
                 currentUser.getAttendees().add(new Attendee(
                          attendee.getName(),
                          currentUser,
@@ -194,13 +194,25 @@ public class UserServicesImpl implements UserServices
     public void delete(long userid)
     {
         userrepo.findById(userid)
-                .orElseThrow(() -> new EntityNotFoundException("User id " + userid + " not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("User id " + userid + " not found!"));
         userrepo.deleteById(userid);
     }
 
     @Transactional
     @Override
-    public void deleteAll() {
+    public void deleteAll()
+    {
         userrepo.deleteAll();
+    }
+
+    @Override
+    public User findByName(String name)
+    {
+        User uu = userrepo.findByUsername(name.toLowerCase());
+        if (uu == null)
+        {
+            throw new ResourceNotFoundException("User name " + name + " not found!");
+        }
+        return uu;
     }
 }

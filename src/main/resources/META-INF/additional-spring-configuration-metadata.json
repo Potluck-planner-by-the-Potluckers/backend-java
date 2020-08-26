@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "local.run.db",
+      "type": "java.lang.String",
+      "description": "Description for local.run.db."
+    },
+    {
+      "name": "local.run.db",
+      "type": "java.lang.String",
+      "description": "Description for local.run.db."
+    }
+  ] }

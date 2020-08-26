@@ -21,12 +21,12 @@ public class Attendee
 
     @ManyToOne
     @JoinColumn(name = "userid")
-    @JsonIgnoreProperties("attendees")
+    @JsonIgnoreProperties(value = {"attendees", "potlucks"})
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "potluckid")
-    @JsonIgnoreProperties("attendees")
+    @JsonIgnoreProperties(value = "attendees")
     private Potluck potluck;
 
     public Attendee()

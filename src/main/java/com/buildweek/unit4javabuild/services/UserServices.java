@@ -12,6 +12,8 @@ public interface UserServices
 
     List<User> findByNameContaining(String username);
 
+    User findByName(String name);
+
     User save(User user);
 
     User update(User user, long userid);

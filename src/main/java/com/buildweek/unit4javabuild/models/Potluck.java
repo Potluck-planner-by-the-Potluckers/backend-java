@@ -32,19 +32,19 @@ public class Potluck
 
     @ManyToOne
     @JoinColumn(name = "userid")
-    @JsonIgnoreProperties("potlucks")
+    @JsonIgnoreProperties(value = {"potlucks", "attendees"})
     private User user;
 
     @OneToMany(mappedBy = "potluck",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    @JsonIgnoreProperties("potluck")
+    @JsonIgnoreProperties(value = "potluck")
     private Set<FoodItem> fooditems = new HashSet<>();
 
     @OneToMany(mappedBy = "potluck",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    @JsonIgnoreProperties("potluck")
+    @JsonIgnoreProperties(value = {"potluck"})
     private Set<Attendee> attendees = new HashSet<>();
 
     public Potluck(String name,
@@ -61,8 +61,6 @@ public class Potluck
         this.time = time;
         this.user = user;
     }
-
-
 
     public Potluck()
     {

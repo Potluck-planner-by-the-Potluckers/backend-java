@@ -23,7 +23,7 @@ public class FoodItem
 
     @ManyToOne
     @JoinColumn(name = "potluckid")
-    @JsonIgnoreProperties("fooditems")
+    @JsonIgnoreProperties(value = "fooditems")
     private Potluck potluck;
 
     public FoodItem() {

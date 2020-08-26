@@ -1,5 +1,6 @@
 package com.buildweek.unit4javabuild.services;
 
+import com.buildweek.unit4javabuild.exceptions.ResourceNotFoundException;
 import com.buildweek.unit4javabuild.models.Role;
 import com.buildweek.unit4javabuild.models.User;
 import com.buildweek.unit4javabuild.models.UserRoles;
@@ -9,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class RoleServicesImpl implements RoleServices
             return rolename;
         } else
         {
-            throw new EntityNotFoundException("Role name " + name + " not Found!");
+            throw new ResourceNotFoundException("Role name " + name + " not Found!");
         }
     }
 
@@ -51,7 +50,7 @@ public class RoleServicesImpl implements RoleServices
     public Role findRoleById(long roleid)
     {
         return rolerepo.findById(roleid)
-                .orElseThrow(() -> new EntityNotFoundException("Role id " + roleid + " not Found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Role id " + roleid + " not Found!"));
     }
 
     @Transactional
@@ -63,7 +62,7 @@ public class RoleServicesImpl implements RoleServices
         if (role.getRoleid() != 0)
         {
             rolerepo.findById(role.getRoleid())
-                    .orElseThrow(() -> new EntityNotFoundException("Role id " + role.getRoleid() + " not found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Role id " + role.getRoleid() + " not found!"));
             newRole.setRoleid(role.getRoleid());
         }
 
@@ -72,7 +71,7 @@ public class RoleServicesImpl implements RoleServices
         for (UserRoles ur : role.getUsers())
         {
             User addUser = userrepo.findById(ur.getUser().getUserid())
-                    .orElseThrow(() -> new EntityNotFoundException("User id " + ur.getUser().getUserid() + "not Found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("User id " + ur.getUser().getUserid() + "not Found!"));
             newRole.getUsers().add(new UserRoles(addUser, newRole));
         }
 
@@ -83,7 +82,7 @@ public class RoleServicesImpl implements RoleServices
     @Override
     public void delete(long id) {
         rolerepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Role id " + id + " not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Role id " + id + " not found!"));
         rolerepo.deleteById(id);
     }
 

@@ -64,7 +64,7 @@ public class User extends Auditable
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    @JsonIgnoreProperties(value = "users", allowSetters = true)
+    @JsonIgnoreProperties(value = {"user"}, allowSetters = true)
     private Set<Attendee> attendees = new HashSet<>();
 
     /**

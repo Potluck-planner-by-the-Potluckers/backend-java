@@ -2,9 +2,11 @@ package com.buildweek.unit4javabuild.controllers;
 
 import com.buildweek.unit4javabuild.models.User;
 import com.buildweek.unit4javabuild.services.UserServices;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,6 +18,8 @@ public class UserController
 {
     @Autowired
     private UserServices userServices;
+
+    // localhost:2019
 
     @GetMapping(value = "/users", produces = "application/json")
     public ResponseEntity<?> getAllUsers()
@@ -60,5 +64,16 @@ public class UserController
     {
         userServices.delete(userid);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "returns the currently authenticated user",
+            response = User.class)
+    @GetMapping(value = "/getuserinfo",
+            produces = {"application/json"})
+    public ResponseEntity<?> getCurrentUserInfo(Authentication authentication)
+    {
+        User u = userServices.findByName(authentication.getName());
+        return new ResponseEntity<>(u,
+                HttpStatus.OK);
     }
 }

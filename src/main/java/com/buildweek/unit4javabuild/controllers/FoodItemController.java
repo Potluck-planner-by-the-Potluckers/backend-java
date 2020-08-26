@@ -65,14 +65,14 @@ public class FoodItemController
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping(value = "/user/{foodid}", consumes = "application/json")
+    @PatchMapping(value = "/fooditem/{foodid}", consumes = "application/json")
     public ResponseEntity<?> patchFood(@RequestBody FoodItem patchFoodItem, @PathVariable long foodid)
     {
         foodItemServices.update(patchFoodItem, foodid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/user/{foodid}")
+    @DeleteMapping(value = "/fooditem/{foodid}")
     public ResponseEntity<?> deleteFood(@PathVariable long foodid)
     {
         foodItemServices.delete(foodid);

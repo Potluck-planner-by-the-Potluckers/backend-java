@@ -71,8 +71,7 @@ public class PotluckController
     }
 
     @PatchMapping(value = "/potluck/{potluckid}", consumes = "application/json")
-    public ResponseEntity<?> patchPotluck(@RequestBody Potluck patchPotluck, @PathVariable long potluckid)
-    {
+    public ResponseEntity<?> patchPotluck(@RequestBody Potluck patchPotluck, @PathVariable long potluckid) throws Exception {
         potluckServices.update(patchPotluck, potluckid);
         return new ResponseEntity<>(HttpStatus.OK);
     }

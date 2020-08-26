@@ -4,7 +4,6 @@ import com.buildweek.unit4javabuild.models.*;
 import com.buildweek.unit4javabuild.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,7 +94,7 @@ public class SeedData implements CommandLineRunner
                 "1999-04-26",
                 "Noon",
                 u2);
-            p2.getAttendees().add(new Attendee("user", u2, p2));
+            p2.getAttendees().add(new Attendee("noah", u2, p2));
             p2.getFooditems().add(new FoodItem("Egg Salad",
                 "Side",
                 "Susan",
@@ -112,7 +111,7 @@ public class SeedData implements CommandLineRunner
                 "1999-04-26",
                 "Noon",
                 u3);
-        p3.getAttendees().add(new Attendee("user", u3, p3));
+        p3.getAttendees().add(new Attendee("john", u3, p3));
         p3.getFooditems().add(new FoodItem("Chicken",
                 "Entree",
                 "Kyle",
@@ -129,7 +128,7 @@ public class SeedData implements CommandLineRunner
                 "1999-04-26",
                 "Noon",
                 u4);
-        p4.getAttendees().add(new Attendee("user", u4, p4));
+        p4.getAttendees().add(new Attendee("johnny", u4, p4));
         p4.getFooditems().add(new FoodItem("Doritos",
                         "Snack",
                         "Sage",

@@ -1,5 +1,6 @@
 package com.buildweek.unit4javabuild.services;
 
+import com.buildweek.unit4javabuild.exceptions.ResourceNotFoundException;
 import com.buildweek.unit4javabuild.models.Attendee;
 import com.buildweek.unit4javabuild.repository.AttendeeRepository;
 import com.buildweek.unit4javabuild.repository.PotluckRepository;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +35,10 @@ public class AttendeeServicesImpl implements AttendeeServices
     }
 
     @Override
-    public Attendee findAttendeeById(long id) throws EntityNotFoundException
+    public Attendee findAttendeeById(long id) throws ResourceNotFoundException
     {
         return attendeerepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Attendee id " + id + " not Found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Attendee id " + id + " not Found!"));
     }
 
     @Override
@@ -54,20 +54,22 @@ public class AttendeeServicesImpl implements AttendeeServices
         if (attendee.getAttendeeid() != 0)
         {
             attendeerepo.findById(attendee.getAttendeeid())
-                    .orElseThrow(() -> new EntityNotFoundException("Attendee id " + attendee.getAttendeeid() + " not Found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Attendee id " + attendee.getAttendeeid() + " not Found!"));
             newAttendee.setAttendeeid(attendee.getAttendeeid());
         }
+
+        newAttendee.setName(attendee.getName());
 
         newAttendee.setGoing(attendee.isGoing());
 
         if (attendee.getUser() != null)
         {
             newAttendee.setUser(userrepo.findById(attendee.getUser().getUserid())
-                    .orElseThrow(() -> new EntityNotFoundException("User id " + attendee.getUser().getUserid() + " not Found!")));
+                    .orElseThrow(() -> new ResourceNotFoundException("User id " + attendee.getUser().getUserid() + " not Found!")));
         }
 
         newAttendee.setPotluck(potluckrepo.findById(attendee.getPotluck().getPotluckid())
-                    .orElseThrow(() -> new EntityNotFoundException("Potluck id " + attendee.getPotluck().getPotluckid() + " not Found!")));
+                    .orElseThrow(() -> new ResourceNotFoundException("Potluck id " + attendee.getPotluck().getPotluckid() + " not Found!")));
 
         return attendeerepo.save(newAttendee);
     }
@@ -75,15 +77,30 @@ public class AttendeeServicesImpl implements AttendeeServices
     @Override
     public Attendee update(Attendee attendee, long id)
     {
-        Attendee updateUser = findAttendeeById(id);
+        Attendee currentAttendee = findAttendeeById(id);
 
-        return null;
+        if (attendee.getName() != null)
+        {
+            currentAttendee.setName(attendee.getName().toLowerCase());
+        }
+
+        if (attendee.getUser() != null)
+        {
+            currentAttendee.setUser(attendee.getUser());
+        }
+
+        if (attendee.getPotluck() != null)
+        {
+            currentAttendee.setPotluck(attendee.getPotluck());
+        }
+
+        return attendeerepo.save(currentAttendee);
     }
 
     @Override
     public void markGoing(long id) {
         Attendee isGoing = attendeerepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Attendee id " + id + " not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Attendee id " + id + " not Found"));
 
         isGoing.setGoing(!isGoing.isGoing());
 
@@ -95,7 +112,7 @@ public class AttendeeServicesImpl implements AttendeeServices
     public void delete(long id)
     {
         attendeerepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Attendee id " + id + " not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Attendee id " + id + " not found!"));
         attendeerepo.deleteById(id);
     }
 
